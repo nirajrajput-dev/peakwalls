@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     // Check credentials
     const validUsername = process.env.ADMIN_USERNAME;
-    const validPasswordHash = process.env.ADMIN_PASSWORD;
+    const validPasswordHashBase64 = process.env.ADMIN_PASSWORD_BASE64;
 
     if (username !== validUsername) {
       return NextResponse.json(
@@ -25,7 +25,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const isValidPassword = await bcrypt.compare(password, validPasswordHash!);
+    // Decode Base64 hash
+    const validPasswordHash = Buffer.from(validPasswordHashBase64!, 'base64').toString('utf8');
+
+    // Compare password
+    const isValidPassword = await bcrypt.compare(password, validPasswordHash);
 
     if (!isValidPassword) {
       return NextResponse.json(

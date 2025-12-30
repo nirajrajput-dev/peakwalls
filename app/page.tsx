@@ -1,22 +1,22 @@
 import Container from "@/components/Container";
 import TitleCard from "@/components/TitleCard";
 import SkeletonCard from "@/components/SkeletonCard";
-import { ITitle } from "@/types";
+import connectDB from "@/lib/mongodb";
+import Title from "@/lib/models/Title";
 import { Suspense } from "react";
 
-async function getTitles(): Promise<ITitle[]> {
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+async function getTitles() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/titles`, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch titles");
-    }
-
-    const data = await response.json();
-    return data.data || [];
+    await connectDB();
+    const titles = await Title.find().sort({ updatedAt: -1 }).lean();
+    return titles.map((t) => ({
+      ...t,
+      _id: t._id.toString(),
+    }));
   } catch (error) {
     console.error("Error fetching titles:", error);
     return [];

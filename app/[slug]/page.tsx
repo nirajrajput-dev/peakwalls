@@ -2,26 +2,38 @@ import Container from "@/components/Container";
 import SkeletonWallpaper from "@/components/SkeletonWallpaper";
 import Link from "next/link";
 import WallpaperGrid from "@/components/WallpaperGrid";
-import { ITitle, IWallpaper } from "@/types";
+import connectDB from "@/lib/mongodb";
+import Title from "@/lib/models/Title";
+import Wallpaper from "@/lib/models/Wallpaper";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-async function getTitleData(slug: string): Promise<{
-  title: ITitle;
-  wallpapers: IWallpaper[];
-} | null> {
+// Force dynamic rendering
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+async function getTitleData(slug: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/titles/${slug}`, {
-      cache: "no-store",
-    });
+    await connectDB();
 
-    if (!response.ok) {
-      return null;
-    }
+    const title = await Title.findOne({ slug }).lean();
+    if (!title) return null;
 
-    const data = await response.json();
-    return data.data;
+    const wallpapers = await Wallpaper.find({ titleId: title._id })
+      .sort({ createdAt: 1 })
+      .lean();
+
+    return {
+      title: {
+        ...title,
+        _id: title._id.toString(),
+      },
+      wallpapers: wallpapers.map((w) => ({
+        ...w,
+        _id: w._id.toString(),
+        titleId: w.titleId.toString(),
+      })),
+    };
   } catch (error) {
     console.error("Error fetching title data:", error);
     return null;
@@ -30,11 +42,8 @@ async function getTitleData(slug: string): Promise<{
 
 async function trackPageView(slug: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    await fetch(`${baseUrl}/api/titles/${slug}/view`, {
-      method: "POST",
-      cache: "no-store",
-    });
+    await connectDB();
+    await Title.findOneAndUpdate({ slug }, { $inc: { viewCount: 1 } });
   } catch (error) {
     console.error("Error tracking page view:", error);
   }

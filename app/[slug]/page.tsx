@@ -1,5 +1,6 @@
 import Container from "@/components/Container";
 import SkeletonWallpaper from "@/components/SkeletonWallpaper";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 import WallpaperGrid from "@/components/WallpaperGrid";
 import connectDB from "@/lib/mongodb";
@@ -67,7 +68,7 @@ async function WallpapersContent({ slug }: { slug: string }) {
       <div className="mb-12">
         <Link
           href="/"
-          className="inline-block text-muted hover:text-foreground transition-colors mb-6"
+          className="inline-block text-muted hover:text-foreground transition-colors mb-6 cursor-pointer"
         >
           Home
         </Link>
@@ -116,12 +117,15 @@ export default async function WallpapersPage({
   const { slug } = await params;
 
   return (
-    <main className="min-h-screen py-16">
-      <Container>
-        <Suspense fallback={<LoadingSkeleton />}>
-          <WallpapersContent slug={slug} />
-        </Suspense>
-      </Container>
-    </main>
+    <>
+      <main className="min-h-screen py-16">
+        <Container>
+          <Suspense fallback={<LoadingSkeleton />}>
+            <WallpapersContent slug={slug} />
+          </Suspense>
+        </Container>
+      </main>
+      <Footer />
+    </>
   );
 }

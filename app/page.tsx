@@ -1,6 +1,7 @@
 import Container from "@/components/Container";
 import TitleCard from "@/components/TitleCard";
 import SkeletonCard from "@/components/SkeletonCard";
+import Footer from "@/components/Footer";
 import connectDB from "@/lib/mongodb";
 import Title from "@/lib/models/Title";
 import { Suspense } from "react";
@@ -38,7 +39,7 @@ async function TitlesGrid() {
   }
 
   return (
-    <div className="flex flex-col gap-16">
+    <div className="flex flex-col gap-12">
       {titles.map((title, index) => (
         <TitleCard key={title._id} title={title} index={index} />
       ))}
@@ -48,9 +49,9 @@ async function TitlesGrid() {
 
 function LoadingSkeleton() {
   return (
-    <div className="flex flex-col gap-16">
-      {[1, 2, 3].map((i) => (
-        <SkeletonCard key={i} />
+    <div className="flex flex-col gap-12">
+      {[0, 1, 2].map((i) => (
+        <SkeletonCard key={i} index={i} />
       ))}
     </div>
   );
@@ -58,25 +59,28 @@ function LoadingSkeleton() {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen py-16">
-      <Container>
-        {/* Header */}
-        <div className="mb-16">
-          <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Niraj Wallpapers
-          </h1>
-          <p className="text-lg lg:text-xl text-foreground max-w-3xl">
-            Explore stunning wallpapers, grouped by their titles for easy
-            browsing. Click any image to view its full gallery and dive into the
-            artistry of your favorite titles.
-          </p>
-        </div>
+    <>
+      <main className="min-h-screen py-16">
+        <Container>
+          {/* Header */}
+          <div className="mb-16">
+            <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Peakwalls
+            </h1>
+            <p className="text-lg lg:text-xl text-foreground max-w-3xl">
+              Explore stunning wallpapers, grouped by their titles for easy
+              browsing. Click any image to view its full gallery and dive into
+              the artistry of your favorite titles.
+            </p>
+          </div>
 
-        {/* Titles Grid */}
-        <Suspense fallback={<LoadingSkeleton />}>
-          <TitlesGrid />
-        </Suspense>
-      </Container>
-    </main>
+          {/* Titles Grid */}
+          <Suspense fallback={<LoadingSkeleton />}>
+            <TitlesGrid />
+          </Suspense>
+        </Container>
+      </main>
+      <Footer />
+    </>
   );
 }

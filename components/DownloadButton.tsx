@@ -23,7 +23,6 @@ export default function DownloadButton({
     setIsDownloading(true);
 
     try {
-      // Call API to get download info and increment counter
       const response = await fetch(`/api/wallpapers/${wallpaperId}/download`, {
         method: "POST",
       });
@@ -34,11 +33,9 @@ export default function DownloadButton({
         throw new Error(data.message || "Download failed");
       }
 
-      // Fetch the actual image as blob
       const imageResponse = await fetch(data.data.originalUrl);
       const blob = await imageResponse.blob();
 
-      // Create blob URL and trigger download
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = blobUrl;
@@ -47,7 +44,6 @@ export default function DownloadButton({
       link.click();
       document.body.removeChild(link);
 
-      // Clean up blob URL
       window.URL.revokeObjectURL(blobUrl);
 
       toast.success("Download started!");
@@ -60,14 +56,14 @@ export default function DownloadButton({
 
   return (
     <div
-      className={`absolute inset-0 bg-black/40 backdrop-blur-sm rounded transition-opacity duration-300 ${
+      className={`absolute inset-0 bg-black/30 backdrop-blur-[2px] rounded transition-opacity duration-300 ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
       <button
         onClick={handleDownload}
         disabled={isDownloading}
-        className="absolute bottom-4 right-4 px-6 py-2 bg-white/20 backdrop-blur-md text-foreground rounded hover:bg-white/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute bottom-4 right-4 px-6 py-2 bg-white/20 backdrop-blur-md text-foreground rounded hover:bg-white/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
       >
         {isDownloading ? "Downloading..." : "Download"}
       </button>

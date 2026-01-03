@@ -3,7 +3,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "Niraj Wallpapers",
+  title: "Peakwalls",
   description:
     "Explore stunning wallpapers, grouped by their titles for easy browsing.",
 };
@@ -15,7 +15,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body style={{ fontFamily: "Manrope, sans-serif" }}>
         {children}
         <Toaster
           position="bottom-right"
@@ -24,6 +36,7 @@ export default function RootLayout({
               background: "#1a1a1a",
               color: "#FDFDFD",
               border: "1px solid #333",
+              fontFamily: "Manrope, sans-serif",
             },
             success: {
               iconTheme: {
